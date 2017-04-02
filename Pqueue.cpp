@@ -1,6 +1,8 @@
 #include "Pqueue.h"
 #include "omp.h"
 #include "ExpressionError.h"
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -37,14 +39,18 @@ void Pqueue::pop() {
 }
 
 void Pqueue::update(string employee, int wait_time, int retain_time) {
+	if (empty())
+		return;
 	int i = 0;
-	while (i < size() - 1 && data[i].getName() != employee)
+	while (i < size() && data[i].getName() != employee)
 		i++;
+	if (i == size())
+		return;
 	int new_waitTime = wait_time + data[i].getWaitTime();
 	int new_retainTime = retain_time + data[i].getRetainTime();
 	data[i].setWaitTime(new_waitTime);
 	data[i].setRetainTime(new_retainTime);
-
+	
 	raiseInQueue(i);
 	lowerInQueue(i);
 
@@ -80,6 +86,8 @@ void Pqueue::lowerInQueue(int index) {
 				swap(data[parent], data[maxchild]);
 				parent = maxchild;
 			}
+			else
+				return;
 		}
 		else
 			return;

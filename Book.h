@@ -3,6 +3,8 @@
 #include "Date.h"
 #include "Employee.h"
 #include "Pqueue.h"
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -10,7 +12,7 @@ class Book {
 
 public:
 	Book() { ; }
-	Book(string new_book) { name = new_book; isArchived = false; }
+	Book(string new_book) { name = new_book; archived = false; }
 	string getName() { return name; };
 	Date getStartDate() { return startDate; };
 	Date getEndDate() { return endDate; };
@@ -24,24 +26,32 @@ public:
 			Employees.push(Employee(itr->getName()));
 		currentRetainer = Employees.top();
 		Employees.pop();
+		cout << name << " begins circulation with " << currentRetainer.getName() << endl;
 	}
 	string getRetainer() { return currentRetainer.getName(); }
 	void setRetainer(Employee& emp) { currentRetainer = emp;}
 	Date getLastPassed() { return lastPassed; }
 	void setLastPassed(Date passed) { lastPassed = passed; }
 	void passNextEmp() { 
-		Employees.pop();
-		if (!Employees.empty())
+		prevRetainer = currentRetainer;
+		if (!Employees.empty()) {
 			currentRetainer = Employees.top();
-		else 
-			isArchived = true; }
-
+			Employees.pop();
+		}
+		else {
+			archived = true;
+			endDate = lastPassed;
+			cout << name << " archived by " << currentRetainer.getName() << endl;
+		}
+	}
+	bool isArchived() { if (archived) return true; else return false; }
 private:
 	Date lastPassed;
 	Date startDate;
 	Date endDate;
 	string name;
-	bool isArchived;
 	Pqueue Employees;
+	bool archived;
 	Employee currentRetainer;
+	Employee prevRetainer;
 };

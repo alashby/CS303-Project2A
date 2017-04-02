@@ -1,5 +1,6 @@
 #include "Library.h"
 #include "Date.h"
+#include <iostream>
 
 using namespace std;
 
@@ -21,4 +22,6 @@ void main() {
 	library.passOn("Software Engineering", Date(2015, 4, 5, DateFormat::US));
 	library.passOn("Software Engineering", Date(2015, 4, 10, DateFormat::US));
 	library.passOn("Software Engineering", Date(2015, 4, 15, DateFormat::US));
+
+	system("pause");
 }

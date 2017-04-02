@@ -15,7 +15,7 @@ public:
 	void circulateBook(string book, Date start_date);
 	void passOn(string book, Date pass_date);
 private:
-	void updateEmployee(string emp, int wait_time, int retain_time);
+	void updateEmployee(string emp, int wait_time, int retain_time, Date pass_date);
 	list<Book> circBooks;
 	list<Book> archBooks;
 	list<Employee> Employees;

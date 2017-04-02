@@ -1,16 +1,19 @@
 #include "Library.h"
 #include "ExpressionError.h"
+#include <iostream>
 
 using namespace std;
 
 void Library::circulateBook(string book, Date start_date) {
-	for (list<Book>::iterator itr = circBooks.begin(); itr != circBooks.end(); itr++) {
+	for (list<Book>::iterator itr = circBooks.begin(); itr != circBooks.end(); itr++) { // book already added
 		if (itr->getName() == book) {
 			itr->setStartDate(start_date);
+			itr->setLastPassed(start_date);
 			itr->populateQueue(Employees);
 			return;
 		}
 	}
+	// book not added
 	Book new_book(book);
 	new_book.setStartDate(start_date);
 	new_book.setLastPassed(start_date);
@@ -18,20 +21,17 @@ void Library::circulateBook(string book, Date start_date) {
 	circBooks.push_back(new_book);
 }
 
-void Library::updateEmployee(string emp, int wait_time, int retain_time) {
+void Library::updateEmployee(string emp, int wait_time, int retain_time, Date pass_date) {
 	list<Employee>::iterator itr_emp = Employees.begin();
 	while (itr_emp->getName() != emp)
 		itr_emp++;
-	int new_waitTime = itr_emp->getWaitTime() + wait_time;
-	int new_retainTime = itr_emp->getRetainTime() + retain_time;
-	itr_emp->setWaitTime(new_waitTime);
-	itr_emp->setRetainTime(new_retainTime);
 
 	omp_set_num_threads(2);
 #pragma omp parallel for
 	for (list<Book>::iterator itr_book = circBooks.begin(); itr_book != circBooks.end(); itr_book++) {
-		itr_book->getEmployees().update(emp, wait_time, retain_time);
-
+		//if (itr_book->getStartDate() >= pass_date) { // only update wait/retain times of later started circulations
+			itr_book->getEmployees().update(emp, wait_time, retain_time);
+		//}
 	}
 }
 
@@ -41,13 +41,26 @@ void Library::passOn(string book, Date pass_date) {
 		itr++;
 	if (itr == circBooks.end())
 		throw Expression_Error("Book not in circulation");
-	updateEmployee(itr->getRetainer(), 0, pass_date - itr->getLastPassed()); // update retain time for employee
-	omp_set_num_threads(2);
+	updateEmployee(itr->getRetainer(), 0, pass_date - itr->getLastPassed(), pass_date);
+	cout << itr->getRetainer() << " retained " << itr->getName() << " for " << pass_date - itr->getLastPassed() << " days.\n";
+	if (!itr->isArchived()) {
+#pragma omp parallel for
+		for (list<Employee>::iterator itr_emp = Employees.begin(); itr_emp != Employees.end(); itr_emp++) {
+			if (itr_emp->getName() != itr->getRetainer()) {
+				updateEmployee(itr_emp->getName(), pass_date - itr->getLastPassed(), 0, pass_date); // update wait times of other employees
+				cout << itr_emp->getName() << " has been waiting for " << itr->getName() << " for " << pass_date - itr->getLastPassed() << " days.\n";
+			}
+		}
+		itr->passNextEmp();
+		itr->setLastPassed(pass_date);
+	}
+	/*updateEmployee(itr->getRetainer(), 0, pass_date - itr->getLastPassed(), pass_date); // update retain time for employee
+	cout << book << " retained for " << pass_date - itr->getLastPassed() << " days by " << itr->getRetainer() << endl;
+	itr->passNextEmp();
 #pragma omp parallel for
 	for (list<Employee>::iterator itr_emp = Employees.begin(); itr_emp != Employees.end(); itr_emp++) {
 		if (itr_emp->getName() != itr->getRetainer())
-			updateEmployee(itr_emp->getName(), pass_date - itr->getLastPassed(), 0); // update retain times of other employees
+			updateEmployee(itr_emp->getName(), pass_date - itr->getLastPassed(), 0, pass_date); // update wait times of other employees
 	}
-	itr->passNextEmp();
-
+	*/
 }
