@@ -26,12 +26,11 @@ void Library::updateEmployee(string emp, int wait_time, int retain_time, Date pa
 	while (itr_emp->getName() != emp)
 		itr_emp++;
 
+
 	omp_set_num_threads(2);
 #pragma omp parallel for
 	for (list<Book>::iterator itr_book = circBooks.begin(); itr_book != circBooks.end(); itr_book++) {
-		//if (itr_book->getStartDate() >= pass_date) { // only update wait/retain times of later started circulations
-			itr_book->getEmployees().update(emp, wait_time, retain_time);
-		//}
+		itr_book->getEmployees().update(emp, wait_time, retain_time);
 	}
 }
 
@@ -42,18 +41,24 @@ void Library::passOn(string book, Date pass_date) {
 	if (itr == circBooks.end())
 		throw Expression_Error("Book not in circulation");
 	updateEmployee(itr->getRetainer(), 0, pass_date - itr->getLastPassed(), pass_date);
+	for (list<Employee>::iterator itr_emp = Employees.begin(); itr_emp != Employees.end(); itr_emp++) {
+		if (itr_emp->getName() == itr->getRetainer())
+			itr_emp->setRetainTime((pass_date - itr->getLastPassed()) + itr_emp->getRetainTime()); // update system list
+	}
 	cout << itr->getRetainer() << " retained " << itr->getName() << " for " << pass_date - itr->getLastPassed() << " days.\n";
-	if (!itr->isArchived()) {
+	omp_set_num_threads(2);
 #pragma omp parallel for
 		for (list<Employee>::iterator itr_emp = Employees.begin(); itr_emp != Employees.end(); itr_emp++) {
 			if (itr_emp->getName() != itr->getRetainer()) {
+				itr_emp->setWaitTime((pass_date - itr->getLastPassed()) + itr_emp->getWaitTime()); // update system list
 				updateEmployee(itr_emp->getName(), pass_date - itr->getLastPassed(), 0, pass_date); // update wait times of other employees
-				cout << itr_emp->getName() << " has been waiting for " << itr->getName() << " for " << pass_date - itr->getLastPassed() << " days.\n";
 			}
 		}
 		itr->passNextEmp();
 		itr->setLastPassed(pass_date);
-	}
+		if (itr->isArchived())
+			archBooks.push_back(*itr);
+
 	/*updateEmployee(itr->getRetainer(), 0, pass_date - itr->getLastPassed(), pass_date); // update retain time for employee
 	cout << book << " retained for " << pass_date - itr->getLastPassed() << " days by " << itr->getRetainer() << endl;
 	itr->passNextEmp();

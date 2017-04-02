@@ -23,7 +23,7 @@ public:
 		if (emps.empty())
 			return;
 		for (list<Employee>::iterator itr = emps.begin(); itr != emps.end(); itr++)
-			Employees.push(Employee(itr->getName()));
+			Employees.push(Employee(itr->getName(), itr->getWaitTime(), itr->getRetainTime()));
 		currentRetainer = Employees.top();
 		Employees.pop();
 		cout << name << " begins circulation with " << currentRetainer.getName() << endl;
@@ -33,7 +33,6 @@ public:
 	Date getLastPassed() { return lastPassed; }
 	void setLastPassed(Date passed) { lastPassed = passed; }
 	void passNextEmp() { 
-		prevRetainer = currentRetainer;
 		if (!Employees.empty()) {
 			currentRetainer = Employees.top();
 			Employees.pop();
@@ -53,5 +52,4 @@ private:
 	Pqueue Employees;
 	bool archived;
 	Employee currentRetainer;
-	Employee prevRetainer;
 };
