@@ -50,6 +50,8 @@ void Pqueue::update(string employee, int wait_time, int retain_time) {
 	int new_retainTime = retain_time + data[i].getRetainTime();
 	data[i].setWaitTime(new_waitTime);
 	data[i].setRetainTime(new_retainTime);
+	cout << data[i].getName() << " waiting time: " << new_waitTime << " days | retaining time: " << new_retainTime << " days.\n";
+
 	
 	raiseInQueue(i);
 	lowerInQueue(i);
