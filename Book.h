@@ -12,7 +12,7 @@ class Book {
 
 public:
 	Book() { ; }
-	Book(string new_book) { name = new_book; archived = false; }
+	Book(string new_book) { name = new_book; archived = false; newCirculation = true; }
 	string getName() { return name; };
 	Date getStartDate() { return startDate; };
 	Date getEndDate() { return endDate; };
@@ -44,6 +44,7 @@ public:
 		}
 	}
 	bool isArchived() { if (archived) return true; else return false; }
+	bool newCirculation;
 private:
 	Date lastPassed;
 	Date startDate;

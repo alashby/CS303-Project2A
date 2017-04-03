@@ -9,7 +9,8 @@ void Library::circulateBook(string book, Date start_date) {
 		if (itr->getName() == book) {
 			itr->setStartDate(start_date);
 			itr->setLastPassed(start_date);
-			itr->populateQueue(Employees);
+
+			//itr->populateQueue(Employees);
 			return;
 		}
 	}
@@ -17,7 +18,7 @@ void Library::circulateBook(string book, Date start_date) {
 	Book new_book(book);
 	new_book.setStartDate(start_date);
 	new_book.setLastPassed(start_date);
-	new_book.populateQueue(Employees);
+	//new_book.populateQueue(Employees);
 	circBooks.push_back(new_book);
 }
 
@@ -40,6 +41,9 @@ void Library::passOn(string book, Date pass_date) {
 		itr++;
 	if (itr == circBooks.end())
 		throw Expression_Error("Book not in circulation");
+	if (itr->newCirculation)
+		itr->populateQueue(Employees);
+	itr->newCirculation = false;
 	updateEmployee(itr->getRetainer(), 0, pass_date - itr->getLastPassed(), pass_date);
 	for (list<Employee>::iterator itr_emp = Employees.begin(); itr_emp != Employees.end(); itr_emp++) {
 		if (itr_emp->getName() == itr->getRetainer())
