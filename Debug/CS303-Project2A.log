@@ -1,6 +1,6 @@
-﻿  Library.cpp
+﻿  Test.cpp
+  Library.cpp
+  Book.cpp
   Generating Code...
-  Compiling...
-  Test.cpp
-  Generating Code...
-  CS303-Project2A.vcxproj -> C:\Users\Al\Documents\Visual Studio 2015\Projects\CS303-Project2A\Debug\CS303-Project2A.exe
+LINK : fatal error LNK1168: cannot open C:\Users\Al\Documents\Visual Studio 2015\Projects\CS303-Project2A\Debug\CS303-Project2A.exe for writing
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppCommon.targets(637,5): error MSB6006: "link.exe" exited with code 1168.

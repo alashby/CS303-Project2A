@@ -10,7 +10,7 @@ public:
 	void pop();
 	bool empty() const { return data.empty(); }
 	size_t size() const { return data.size(); }
-	const Employee& top() const { return data.front(); }
+	Employee& top() { return data.front(); }
 	void update(string employee, int wait_time, int retain_time);
 private:
 	vector<Employee> data;

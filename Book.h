@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include "omp.h"
 #include "Date.h"
 #include "Employee.h"
 #include "Pqueue.h"
@@ -8,49 +9,49 @@
 
 using namespace std;
 
+/*The Book class is an object that stores information of a book as well as provide the function
+to pass a book off to another employee.*/
+
 class Book {
 
 public:
-	Book() { ; }
+
+	//Book() { name = ""; archived = false; newCirculation = true; }
 	Book(string new_book) { name = new_book; archived = false; newCirculation = true; }
-	string getName() { return name; };
-	Date getStartDate() { return startDate; };
-	Date getEndDate() { return endDate; };
-	void setStartDate(Date sd) { startDate = sd; }
-	void setEndDate(Date ed) { endDate = ed; }
-	Pqueue& getEmployees() { return Employees; }
-	void populateQueue(list<Employee>& emps) {
-		if (emps.empty())
-			return;
-		for (list<Employee>::iterator itr = emps.begin(); itr != emps.end(); itr++)
-			Employees.push(Employee(itr->getName(), itr->getWaitTime(), itr->getRetainTime()));
-		currentRetainer = Employees.top();
-		Employees.pop();
-		cout << name << " begins circulation with " << currentRetainer.getName() << endl;
-	}
-	string getRetainer() { return currentRetainer.getName(); }
-	void setRetainer(Employee& emp) { currentRetainer = emp;}
-	Date getLastPassed() { return lastPassed; }
-	void setLastPassed(Date passed) { lastPassed = passed; }
-	void passNextEmp() { 
-		if (!Employees.empty()) {
-			currentRetainer = Employees.top();
-			Employees.pop();
-		}
-		else {
-			archived = true;
-			endDate = lastPassed;
-			cout << name << " archived by " << currentRetainer.getName() << endl;
-		}
-	}
+
+	void populateQueue(list<Employee>& emps);
+	void passNextEmp(list<Employee>& emps);
 	bool isArchived() { if (archived) return true; else return false; }
 	bool newCirculation;
+	friend bool operator== (const Book& b1, const Book& b2) {
+		return (b1.name == b2.name);
+	}
+
+	//Getters And Setters
+	string getName() { return name; };
+
+	Date getStartDate() { return startDate; };
+	void setStartDate(Date sd) { startDate = sd; }
+
+	Date getEndDate() { return endDate; };
+	void setEndDate(Date ed) { endDate = ed; }
+
+	Pqueue& getEmployees() { return Employees; }
+
+	string getRetainer() { return currentRetainer.getName(); }
+	void setRetainer(Employee& emp) { currentRetainer = emp; }
+
+
+	Date getLastPassed() { return lastPassed; }
+	void setLastPassed(Date passed) { lastPassed = passed; }
+
 private:
-	Date lastPassed;
+	// Data
+	string name;
 	Date startDate;
 	Date endDate;
-	string name;
 	Pqueue Employees;
-	bool archived;
 	Employee currentRetainer;
+	Date lastPassed;
+	bool archived;
 };

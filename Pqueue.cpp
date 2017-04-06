@@ -16,13 +16,7 @@ void Pqueue::push(const Employee& emp)
 	data.push_back(emp);
 	int child = size() - 1;
 	raiseInQueue(child);
-	/* Linear Vector
-	while ((new_emp - 1) >= 0 &&
-		priority(data, new_emp) < priority(data, new_emp - 1)) {
-		swap(data[new_emp], data[new_emp - 1]);
-		new_emp--;
-	}
-	*/
+
 }
 
 void Pqueue::pop() {
@@ -50,27 +44,10 @@ void Pqueue::update(string employee, int wait_time, int retain_time) {
 	int new_retainTime = retain_time + data[i].getRetainTime();
 	data[i].setWaitTime(new_waitTime);
 	data[i].setRetainTime(new_retainTime);
-	cout << data[i].getName() << " waiting time: " << new_waitTime << " days | retaining time: " << new_retainTime << " days.\n";
-
+	
 	
 	raiseInQueue(i);
 	lowerInQueue(i);
-
-	/* Linear Vector
-	// while i is higher priority, raise child to front of queue (back of vector)
-	while (priority(data, i) > priority(data, i + 1))
-	{
-		swap(data[i], data[i + 1]);
-		i++;
-	}
-	*/
-	/* Linear Vector
-	// while parent is lower priority, lower parent to back of queue (front of vector)
-	while (priority(data, i) < priority(data, i - 1)) {
-		swap(data[i], data[i - 1]);
-		i++;
-	}
-	*/
 }
 
 void Pqueue::lowerInQueue(int index) {
