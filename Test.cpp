@@ -1,3 +1,8 @@
+// Al Ashby
+// CS303
+// 4/9/2017
+// Project 2A
+
 #include "Library.h"
 #include "Date.h"
 #include <iostream>

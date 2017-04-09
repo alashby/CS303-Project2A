@@ -1,3 +1,8 @@
+// Al Ashby
+// CS303
+// 4/9/2017
+// Project 2A
+
 #pragma once
 #include <stdexcept>
 using namespace std;
